@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Cartão da Óptica - EM13CNT306</title>
+  <style>
+    body {
+      font-family: 'Inter', Arial, sans-serif;
+      background: #f6f9fa;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      /* Fita de segurança no topo */
+      background-image: repeating-linear-gradient(
+        135deg,
+        #ffd600 0px, #ffd600 30px,
+        #222 30px, #222 60px
+      );
+      background-size: 100% 18px;
+      background-repeat: repeat-x;
+      background-position: top;
+      position: relative;
+    }
+    .container {
+      max-width: 600px;
+      margin: 60px auto 0 auto;
+      background: #fffbe7;
+      border-radius: 18px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.10);
+      padding: 32px 24px 24px 24px;
+      border: 3px solid #ffd600;
+      position: relative;
+    }
+    .container:before {
+      content: "";
+      display: block;
+      position: absolute;
+      left: -3px; right: -3px; top: -3px;
+      height: 18px;
+      background: repeating-linear-gradient(
+        135deg,
+        #ffd600 0px, #ffd600 30px,
+        #222 30px, #222 60px
+      );
+      border-radius: 16px 16px 0 0;
+    }
+    .destaque {
+      background: #fffde7;
+      border-left: 8px solid #ffd600;
+      padding: 18px 18px 12px 18px;
+      border-radius: 10px;
+      margin-bottom: 28px;
+      font-size: 1.08rem;
+      color: #795548;
+      font-weight: 500;
+      box-shadow: 0 2px 8px #ffd60033;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .destaque::before {
+      content: "⚠️";
+      font-size: 1.6rem;
+      margin-right: 4px;
+      flex-shrink: 0;
+    }
+    h1 {
+      text-align: center;
+      color: #ffd600;
+      margin-bottom: 10px;
+      text-shadow: 1px 1px 0 #222, 0 2px 8px #ffd60055;
+      font-weight: 900;
+      letter-spacing: 1px;
+    }
+    .grafico-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    #barra-externa {
+      width: 100%;
+      max-width: 320px;
+      height: 32px;
+      background: #ffe082;
+      border-radius: 18px;
+      margin: 0 auto 10px auto;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 2px 8px #ffd60044;
+      border: 2px solid #ffd600;
+    }
+    #barra-interna {
+      height: 100%;
+      width: 0%;
+      background: repeating-linear-gradient(
+        135deg,
+        #ffd600 0px, #ffd600 20px,
+        #222 20px, #222 40px
+      );
+      border-radius: 18px 0 0 18px;
+      transition: width 0.7s cubic-bezier(.4,2,.6,1);
+    }
+    #barra-label {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #222;
+      font-size: 1.08rem;
+      pointer-events: none;
+      letter-spacing: 1px;
+      text-shadow: 0 1px 2px #fff, 0 0 2px #ffd60044;
+    }
+    .cartao {
+      background: #fffde7;
+      border: 2px solid #ffd600;
+      border-radius: 14px;
+      padding: 22px 18px;
+      margin-bottom: 18px;
+      box-shadow: 0 2px 8px #ffd60022;
+      position: relative;
+    }
+    .cartao h2 {
+      color: #222;
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 1.15rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+    .cartao .pergunta {
+      font-weight: 500;
+      margin-bottom: 12px;
+      color: #263238;
+    }
+    .cartao .alternativas label {
+      display: block;
+      margin-bottom: 7px;
+      cursor: pointer;
+      font-size: 1rem;
+      padding-left: 8px;
+      border-left: 4px solid #ffd60022;
+      transition: border-color 0.2s;
+    }
+    .cartao .alternativas label:hover {
+      border-left: 4px solid #ffd600;
+      background: #fff9c4;
+    }
+    .botao {
+      display: block;
+      width: 100%;
+      background: #ffd600;
+      color: #222;
+      border: none;
+      border-radius: 8px;
+      padding: 13px;
+      font-size: 1.08rem;
+      font-weight: bold;
+      margin-top: 18px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      box-shadow: 0 2px 8px #ffd60044;
+      letter-spacing: 1px;
+    }
+    .botao:hover {
+      background: #222;
+      color: #ffd600;
+    }
+    .resultado {
+      margin-top: 24px;
+      background: #fffde7;
+      border-radius: 10px;
+      padding: 18px;
+      text-align: center;
+      color: #222;
+      font-size: 1.08rem;
+      font-weight: 600;
+      border: 2px solid #ffd600;
+      box-shadow: 0 2px 8px #ffd60033;
+    }
+    /* Ícone de capacete de segurança */
+    .helmet {
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 6px;
+      font-size: 1.4em;
+    }
+    .card-certificado {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: linear-gradient(120deg, #fffde7 60%, #ffe082 100%);
+      border: 3.5px solid #ffd600;
+      border-radius: 32px;
+      box-shadow: 0 8px 32px #ffd60033, 0 2px 8px #2222;
+      max-width: 540px;
+      margin: 32px auto 18px auto;
+      padding: 28px 24px 22px 24px;
+      position: relative;
+      font-family: 'Inter', Arial, sans-serif;
+      transition: box-shadow 0.2s;
+    }
+    .card-certificado-grid {
+      display: grid;
+      grid-template-columns: 130px 1fr;
+      gap: 28px 32px;
+      align-items: center;
+      width: 100%;
+    }
+    .card-foto-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    .card-foto {
+      width: 110px;
+      height: 110px;
+      border: 3px solid #ffd600;
+      background: #fff9c4;
+      border-radius: 18px;
+      overflow: hidden;
+      margin-bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px #ffd60022;
+      transition: border 0.2s;
+      position: relative;
+    }
+    .card-foto img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      image-rendering: pixelated;
+      border-radius: 12px;
+      filter: drop-shadow(0 2px 8px #ffd60055);
+      background: #fffbe7;
+    }
+    .card-info-area {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-width: 180px;
+    }
+    .card-campo {
+      margin-bottom: 4px;
+    }
+    .card-campo label {
+      font-weight: 600;
+      color: #222;
+      font-size: 1em;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .card-campo input {
+      width: 100%;
+      border: 1.5px solid #ffd600;
+      border-radius: 6px;
+      padding: 6px 8px;
+      font-size: 1em;
+      margin-top: 2px;
+      background: #fff;
+      color: #222;
+      outline: none;
+      transition: border 0.2s;
+    }
+    .card-campo input:focus {
+      border: 1.5px solid #222;
+    }
+    .card-grafico {
+      margin-top: 10px;
+      margin-bottom: 6px;
+    }
+    #mini-barra-externa {
+      width: 170px;
+      height: 16px;
+      background: #ffe082;
+      border-radius: 9px;
+      margin: 6px 0 0 0;
+      position: relative;
+      overflow: hidden;
+      border: 2px solid #ffd600;
+    }
+    #mini-barra-interna {
+      height: 100%;
+      width: 0%;
+      background: repeating-linear-gradient(
+        135deg,
+        #ffd600 0px, #ffd600 10px,
+        #222 10px, #222 20px
+      );
+      border-radius: 9px 0 0 9px;
+      transition: width 0.7s cubic-bezier(.4,2,.6,1);
+    }
+    #mini-barra-label {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #222;
+      font-size: 0.98em;
+      pointer-events: none;
+      letter-spacing: 1px;
+      text-shadow: 0 1px 2px #fff, 0 0 2px #ffd60044;
+    }
+    .assinatura {
+      margin-top: 14px;
+      font-size: 0.97em;
+      color: #888;
+      text-align: right;
+      font-style: italic;
+      letter-spacing: 0.5px;
+    }
+    .card-upload-btn-externo {
+      border: 2px dashed #ffd600;
+      background: #fffbe7;
+      color: #222;
+      border-radius: 8px;
+      padding: 8px 18px;
+      font-size: 1.05em;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s, border 0.2s;
+      margin-top: 0;
+      margin-bottom: 0;
+      text-align: center;
+      box-shadow: 0 1px 6px #ffd60022;
+      outline: none;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-upload-btn-externo:hover, .card-upload-btn-externo:focus {
+      background: #ffd600;
+      color: #222;
+      border: 2px solid #222;
+    }
+    .botao-download {
+      background: #ffd600;
+      color: #222;
+      border: none;
+      border-radius: 8px;
+      padding: 11px 24px;
+      font-size: 1.08rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      box-shadow: 0 2px 8px #ffd60044;
+      letter-spacing: 1px;
+    }
+    .botao-download:hover {
+      background: #222;
+      color: #ffd600;
+    }
+    .descricao-inicial {
+      max-width: 650px;
+      margin: 32px auto 18px auto;
+      background: #fffde7;
+      border-left: 6px solid #ffd600;
+      border-radius: 10px;
+      padding: 16px 20px 12px 20px;
+      font-size: 1.07em;
+      color: #444;
+      box-shadow: 0 2px 8px #ffd60022;
+      font-family: 'Inter', Arial, sans-serif;
+    }
+
+    .descricao-inicial b {
+      color: #00838f;
+      font-weight: 600;
+      word-break: break-all;
+    }
+
+    @media (max-width: 700px) {
+      .card-certificado { padding: 10px 2px 8px 2px; }
+      .card-certificado-grid { grid-template-columns: 1fr; gap: 10px 0; }
+      .card-foto-area { align-items: center; }
+      .card-info-area { min-width: 0; width: 100%; }
+      #mini-barra-externa { width: 100%; }
+    }
+
+    /* Adicionei o CSS para distribuir danger.png nas laterais como fundo decorativo */
+    .bg-danger-lateral {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 170px;
+      height: 100vh;
+      background: url('danger.png') repeat-y left top/140px auto;
+      pointer-events: none;
+      opacity: 0.18;
+      z-index: 0;
+      /* Distribui mais imagens na vertical */
+      background-repeat: repeat-y;
+      background-size: 140px 140px;
+      background-position: left top, left 160px, left 320px;
+    }
+    .bg-danger-lateral.right {
+      left: auto;
+      right: 0;
+      background-position: right top, right 160px, right 320px;
+    }
+
+    @media (max-width: 1100px) {
+      .bg-danger-lateral, .bg-danger-lateral.right {
+        width: 90px;
+        background-size: 80px 80px;
+        opacity: 0.13;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .bg-danger-lateral, .bg-danger-lateral.right {
+        display: none;
+      }
+      .container,
+      .card-certificado,
+      .descricao-inicial {
+        margin-left: 4vw !important;
+        margin-right: 4vw !important;
+        max-width: 98vw !important;
+        border-radius: 16px !important;
+        padding-left: 2vw !important;
+        padding-right: 2vw !important;
+      }
+      .card-certificado-grid {
+        grid-template-columns: 1fr !important;
+        gap: 10px 0 !important;
+      }
+      .card-foto-area {
+        align-items: center !important;
+        margin-bottom: 10px;
+      }
+      .card-foto {
+        width: 90px !important;
+        height: 90px !important;
+      }
+      #mini-barra-externa {
+        width: 100% !important;
+      }
+      .botao-download,
+      .card-upload-btn-externo {
+        width: 100%;
+        font-size: 1em;
+        padding: 10px 0;
+      }
+    }
+
+    /* Garante que o conteúdo fique acima das imagens de fundo */
+    body > *:not(.bg-danger-lateral):not(.bg-danger-lateral.right) {
+      position: relative;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-danger-lateral"></div>
+  <div class="bg-danger-lateral right"></div>
+  <div class="descricao-inicial">
+    <p>
+      Responda as questões de Óptica e Segurança, adicione sua foto (pode ser uma versão modificada por inteligência artificial, como pixel art, ghibli, etc.), e ao final baixe o cartão certificado. Envie o cartão gerado para o e-mail: <b>ronaldofontana@prof.educacao.sp.gov.br</b>.
+    </p>
+  </div>
+  <div class="card-certificado" id="card-certificado">
+    <form id="formCard" autocomplete="off" onsubmit="event.preventDefault();">
+      <div class="card-certificado-grid">
+        <div class="card-foto-area">
+          <div class="card-foto" id="card-foto">
+            <img id="foto-preview" src="https://api.dicebear.com/7.x/pixel-art/svg?seed=student" alt="Foto em pixel arte" />
+          </div>
+        </div>
+        <div class="card-info-area">
+          <div class="card-campo">
+            <label for="nomeAluno"><span class="helmet">🦺</span> Nome:</label>
+            <input type="text" id="nomeAluno" placeholder="Seu nome" maxlength="40" required>
+          </div>
+          <div class="card-campo">
+            <label for="nomeEscola"><span class="helmet">🏫</span> Escola:</label>
+            <input type="text" id="nomeEscola" placeholder="Nome da escola" maxlength="40" required>
+          </div>
+          <div class="card-grafico">
+            <span style="font-size:0.98em;color:#666;">Índice de aproveitamento em Óptica</span>
+            <div id="mini-barra-externa">
+              <div id="mini-barra-interna"></div>
+              <span id="mini-barra-label">0%</span>
+            </div>
+          </div>
+          <div class="assinatura">
+            <span>Certificado de conhecimentos em Óptica e Segurança</span>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div style="display:flex;justify-content:center;margin-bottom:24px;">
+    <label class="card-upload-btn-externo" tabindex="0">
+      <input type="file" accept="image/*" id="foto-input" style="display:none">
+      <span>📷 Adicionar/Alterar imagem do cartão</span>
+    </label>
+  </div>
+  <div style="display:flex;justify-content:center;margin-bottom:32px;">
+    <button class="botao-download" onclick="baixarCard()">Baixar meu cartão certificado</button>
+  </div>
+  <div class="container">
+    <div class="destaque">
+      <span class="helmet">🦺</span>
+      <strong>Habilidade EM13CNT306:</strong> Avaliar os riscos envolvidos em atividades cotidianas, aplicando conhecimentos das Ciências da Natureza, para justificar o uso de equipamentos e recursos, bem como comportamentos de segurança, visando à integridade física, individual e coletiva, e socioambiental, podendo fazer uso de dispositivos e aplicativos digitais que viabilizem a estruturação de simulações de tais riscos.
+    </div>
+    <div class="grafico-container">
+      <div id="barra-externa">
+        <div id="barra-interna"></div>
+        <span id="barra-label">0%</span>
+      </div>
+      <div id="acertos-label" style="margin-top:10px;font-weight:500;color:#222;"></div>
+    </div>
+    <form id="formQuestoes">
+      <!-- Cartões das questões serão inseridos aqui -->
+    </form>
+    <button class="botao" onclick="corrigir(event)">Ver meu índice de acertos</button>
+    <div class="resultado" id="resultado" style="display:none"></div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script>
+    const questoes = [
+      {
+        pergunta: "Durante a realização de um experimento com laser em sala de aula, quais cuidados devem ser tomados em relação aos meios onde o feixe passa?",
+        alternativas: [
+          "Usar superfícies opacas para refletir mais luz.",
+          "Utilizar meios translúcidos para intensificar o feixe.",
+          "Evitar olhar diretamente para o feixe, mesmo em meios transparentes.",
+          "Usar somente luz visível para segurança completa."
+        ],
+        correta: 2
+      },
+      {
+        pergunta: "Ao construir uma câmara escura com alunos, qual risco deve ser avaliado para garantir segurança no experimento?",
+        alternativas: [
+          "A possibilidade de explosão do recipiente.",
+          "A exposição direta a luz UV ou laser.",
+          "A necessidade de usar luz infravermelha.",
+          "A presença de corrente elétrica na caixa."
+        ],
+        correta: 1
+      },
+      {
+        pergunta: "Na prática com laser em um tanque de acrílico com água (para observar refração), que cuidado deve ser tomado para evitar acidentes?",
+        alternativas: [
+          "Utilizar água quente para melhor visualização.",
+          "Direcionar o laser nos olhos para observar o feixe.",
+          "Utilizar óculos de proteção e manter o laser na horizontal.",
+          "Deixar o tanque destampado para facilitar evaporação."
+        ],
+        correta: 2
+      },
+      {
+        pergunta: "Em uma simulação digital de um sistema óptico, como o uso dessa ferramenta pode evitar riscos?",
+        alternativas: [
+          "Dispensa o uso de qualquer conhecimento teórico.",
+          "Elimina a necessidade de luz artificial.",
+          "Permite estudar trajetórias de luz sem risco de exposição direta.",
+          "Torna os experimentos irrelevantes em laboratório."
+        ],
+        correta: 2
+      },
+      {
+        pergunta: "Ao trabalhar com espelhos planos em sala, qual cuidado deve ser adotado quanto à segurança física dos estudantes?",
+        alternativas: [
+          "Incentivar o manuseio com as mãos molhadas.",
+          "Cortar os espelhos para caberem em caixas.",
+          "Reforçar as bordas com fita para evitar cortes.",
+          "Posicionar os espelhos voltados para o teto."
+        ],
+        correta: 2
+      },
+      {
+        pergunta: "Por que o uso de simuladores digitais é recomendado ao estudar a formação de imagens em espelhos?",
+        alternativas: [
+          "Eles eliminam a necessidade de aprender as leis físicas.",
+          "Permitem testar trajetórias reais sem interferência ambiental.",
+          "Aumentam os riscos, incentivando maior atenção.",
+          "Permitem visualização segura e precisa, sem risco de quebra de espelhos."
+        ],
+        correta: 3
+      },
+      {
+        pergunta: "Qual aplicação prática do campo visual em espelhos está diretamente relacionada à segurança coletiva?",
+        alternativas: [
+          "Espelhos decorativos em residências.",
+          "Espelhos planos em telescópios.",
+          "Espelhos retrovisores e de corredor em ambientes públicos.",
+          "Espelhos para maquiagem em ambientes escuros."
+        ],
+        correta: 2
+      },
+      {
+        pergunta: "Espelhos esféricos convexos são usados em áreas de risco (como garagens e hospitais) porque:",
+        alternativas: [
+          "Aumentam a iluminação do local.",
+          "Melhoram a resolução da imagem.",
+          "Diminuem o campo de visão.",
+          "Ampliam o campo visual, auxiliando na prevenção de acidentes."
+        ],
+        correta: 3
+      },
+      {
+        pergunta: "Durante uma simulação de raios incidentes em espelhos esféricos, que vantagem em termos de segurança ela proporciona?",
+        alternativas: [
+          "Evita riscos de quebra e exposição a fragmentos cortantes.",
+          "Dispensa o aprendizado de conceitos teóricos.",
+          "Elimina o uso de computadores.",
+          "Substitui a necessidade de laboratório físico."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "Em laboratórios escolares, o uso de cálculos como o da equação de Gauss ajuda a:",
+        alternativas: [
+          "Aumentar a complexidade das atividades.",
+          "Avaliar com precisão a posição da imagem sem necessidade de ajustes manuais.",
+          "Substituir o uso de simulações digitais.",
+          "Eliminar a necessidade de uso de espelhos."
+        ],
+        correta: 1
+      },
+      {
+        pergunta: "O uso de fontes de luz monocromática em experimentos ópticos é mais seguro porque:",
+        alternativas: [
+          "Gera menos sombra.",
+          "Diminui a dispersão da luz.",
+          "Permite visualização mais rápida.",
+          "Reduz a intensidade e o risco de exposição a radiação nociva."
+        ],
+        correta: 3
+      },
+      {
+        pergunta: "Ao utilizar lasers para estudar refração em materiais, é importante conhecer os índices de refração porque:",
+        alternativas: [
+          "Eles indicam quais cores são visíveis.",
+          "Permitem prever desvios e evitar exposições incorretas do feixe.",
+          "Indicam o tempo de exposição necessário.",
+          "Ajudam a resfriar o equipamento."
+        ],
+        correta: 1
+      },
+      {
+        pergunta: "Durante um experimento com luz branca em prismas, o que justifica o uso de óculos de proteção?",
+        alternativas: [
+          "A possibilidade de projeção de feixes com diferentes intensidades.",
+          "A presença de campos elétricos.",
+          "O risco de combustão do prisma.",
+          "A necessidade de proteger contra calor."
+        ],
+        correta: 0
+      },
+      {
+        pergunta: "Por que é importante revisar as leis da reflexão e refração antes de realizar experimentos com laser?",
+        alternativas: [
+          "Para tornar o experimento mais demorado.",
+          "Para evitar erros conceituais e riscos por mau direcionamento da luz.",
+          "Porque as leis mudam com o tempo.",
+          "Porque dispensam o uso de qualquer equipamento de proteção."
+        ],
+        correta: 1
+      }
+    ];
+
+    function gerarCartoes() {
+      const form = document.getElementById('formQuestoes');
+      questoes.forEach((q, i) => {
+        const div = document.createElement('div');
+        div.className = 'cartao';
+        div.innerHTML = `
+          <h2>Questão ${i + 1}</h2>
+          <div class="pergunta">${q.pergunta}</div>
+          <div class="alternativas">
+            ${q.alternativas.map((alt, j) =>
+              `<label><input type="radio" name="q${i}" value="${j}"> ${alt}</label>`
+            ).join('')}
+          </div>
+        `;
+        form.appendChild(div);
+      });
+    }
+
+    gerarCartoes();
+
+    function corrigir(event) {
+      event.preventDefault();
+      let acertos = 0;
+      questoes.forEach((q, i) => {
+        const marcada = document.querySelector(`input[name="q${i}"]:checked`);
+        if (marcada && parseInt(marcada.value) === q.correta) acertos++;
+      });
+      const percentual = Math.round((acertos / questoes.length) * 100);
+      document.getElementById("acertos-label").innerText = `Índice de acertos: ${acertos} de ${questoes.length} (${percentual}%)`;
+      document.getElementById("resultado").style.display = "block";
+      document.getElementById("resultado").innerText =
+        `Você acertou ${acertos} de ${questoes.length} questões. Aproveitamento: ${percentual}%.`;
+
+      // Atualiza barra de progresso
+      const barra = document.getElementById("barra-interna");
+      const label = document.getElementById("barra-label");
+      barra.style.width = percentual + "%";
+      label.textContent = percentual + "%";
+
+      // Atualiza a barra do card com o índice de acertos
+      function atualizarMiniBarra(percentual) {
+        document.getElementById("mini-barra-interna").style.width = percentual + "%";
+        document.getElementById("mini-barra-label").textContent = percentual + "%";
+      }
+
+      // Atualiza o card sempre que corrigir
+      function sincronizarCardComGrafico(percentual) {
+        atualizarMiniBarra(percentual);
+      }
+
+      sincronizarCardComGrafico(percentual);
+    }
+
+    // Foto em pixel arte
+    document.getElementById("foto-input").addEventListener("change", function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        document.getElementById("foto-preview").src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Baixar o card como imagem
+    function baixarCard() {
+      // Previne download se campos não preenchidos
+      const nome = document.getElementById("nomeAluno").value.trim();
+      const escola = document.getElementById("nomeEscola").value.trim();
+      if (!nome || !escola) {
+        alert("Preencha seu nome e o nome da escola para baixar o cartão.");
+        return;
+      }
+      // Remove foco dos campos para não aparecer cursor
+      document.activeElement.blur();
+      html2canvas(document.getElementById("card-certificado"), {backgroundColor: null}).then(canvas => {
+        const link = document.createElement('a');
+        link.download = "cartao-optica.png";
+        link.href = canvas.toDataURL();
+        link.click();
+      });
+    }
+
+    // Integração com o quiz
+    // Chame sincronizarCardComGrafico(percentual) ao corrigir o quiz!
+    // Exemplo: sincronizarCardComGrafico(percentual);
+
+    // Exemplo de integração automática:
+    // (adicione dentro da função corrigir, após calcular o percentual)
+    // sincronizarCardComGrafico(percentual);
+  </script>
+  <div style="max-width:700px;margin:40px auto 24px auto;">
+    <img src="cyclope.png" alt="X-Men for Dummies: Ciclope" style="width:100%;border-radius:18px;box-shadow:0 2px 12px #2222;">
+  </div>
+</body>
+</html>
